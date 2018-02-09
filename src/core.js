@@ -5,34 +5,37 @@ var emitTimer;
 const emitMediaChange = (event) => {
     var width = document.body.clientWidth;
     Components.forEach(item => {
-        item.__documentWidth__ = width;
+        item.documentWidth__ = width;
     });
 }
-(window.addEventListener || window.attachEvent)('resize', event => {
+window.addEventListener('resize', event => {
     if (emitTimer) {
         clearTimeout(emitTimer);
     }
-    setTimeout(() => {
+    emitTimer = setTimeout(() => {
+        emitTimer = null;
         emitMediaChange(event);
     }, options.delay);
-});
+}, false);
 
 export default (ops = {}) => {
     extend(true, ops, options);
     const mixin = {
         props: {},
-        data: {
-            __responsiveOptions__: ops,
-            __documentWidth__: document.body.clientWidth
+        data() {
+            return {
+                responsiveOptions__: ops,
+                documentWidth__: document.body.clientWidth
+            }
         },
         watch: {
-            __documentWidth__() {
+            documentWidth__() {
                 var medias = this.mediaNames;
 
                 medias && medias.length > 0 && medias.forEach(prop => {
-                    var media = this.__responsiveOptions__.media[prop];
+                    var media = this.responsiveOptions__.media[prop];
                     var propValue = this[media.prop || prop];
-                    propValue = typeof media.convert ? media.convert(propValue) : propValue;
+                    propValue = typeof media.convert === 'function' ? media.convert(propValue) : propValue;
                     if (typeof propValue === 'object') {
                         Object.keys(propValue).forEach(name => {
                             this.$set(this, name, propValue[name])
@@ -44,11 +47,11 @@ export default (ops = {}) => {
         computed: {
             mediaNames() {
                 var arr = [];
-                for (var prop in __responsiveOptions__.media) {
-                    var item = __responsiveOptions__.media[prop];
+                for (var prop in this.responsiveOptions__.media) {
+                    var item = this.responsiveOptions__.media[prop];
                     var min = item.min || 0;
                     var max = item.max || Infinity;
-                    if (this.__documentWidth__ >= min && this.__documentWidth__ <= max) {
+                    if (this.documentWidth__ >= min && this.documentWidth__ <= max) {
                         arr.push(prop);
                     }
                 }

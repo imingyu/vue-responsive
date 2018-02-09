@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="app">
+        <user :name="name" :age="age" :desc="desc" :sm="{age:10}"></user>
+    </div>
+    <script src="https://cdn.bootcss.com/vue/2.5.13/vue.js"></script>
+    <script src="../dist/index.js"></script>
+    <script>
+        Vue.use(VueResponsiveData);
+        Vue.component('user', {
+            template: `
+            <div class="user">
+                <h3>{{name}} <small>{{age}}</small></h3>
+                <h4>{{desc}}</h4>
+            </div>
+            `,
+            props: {
+                name: String,
+                age: Number,
+                desc: String
+            },
+            data() {
+                return {};
+            }
+        });
+        var vm = new Vue({
+            el: '#app',
+            data: {
+                name: 'Tom',
+                age: 20,
+                desc: 'A child.'
+            }
+        })
+    </script>
+</body>
+
+</html>
